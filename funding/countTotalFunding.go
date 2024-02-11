@@ -6,7 +6,7 @@ import (
 	"funding2.0/types"
 )
 
-func CountTotalFunding(list []types.BybitSecondItem, symbol string, timeMap *map[string]int64) *types.TotalFundingInDays {
+func CountTotalFundingBybit(list []types.BybitSecondItem, symbol string, timeMap *map[string]int64) *types.TotalFundingInDays {
 	obj := types.TotalFundingInDays{
 		Symbol: symbol,
 	}
@@ -28,6 +28,31 @@ func CountTotalFunding(list []types.BybitSecondItem, symbol string, timeMap *map
 		count += fundingNum
 
 		switch timestamp {
+		case (*timeMap)["3"]: 
+			obj.ThreeDays = ConvertToFloat(fmt.Sprintf("%.4f", count * 100))
+		case (*timeMap)["7"]: 
+			obj.SevenDays = ConvertToFloat(fmt.Sprintf("%.4f", count * 100))
+		case (*timeMap)["14"]: 
+			obj.FourteenDays = ConvertToFloat(fmt.Sprintf("%.4f", count * 100))
+		case (*timeMap)["30"]: 
+			obj.ThirtyDays = ConvertToFloat(fmt.Sprintf("%.4f", count * 100))
+			return &obj
+		}
+	}
+
+	return &obj
+}
+
+func CountTotalFundingMexc(list []types.MexcSecondItem, symbol string, timeMap *map[string]int64) *types.TotalFundingInDays {
+	obj := types.TotalFundingInDays{
+		Symbol: symbol,
+	}
+	var count float64
+
+	for _, v := range list {
+		count += v.FundingRate
+
+		switch v.SettleTime {
 		case (*timeMap)["3"]: 
 			obj.ThreeDays = ConvertToFloat(fmt.Sprintf("%.4f", count * 100))
 		case (*timeMap)["7"]: 
