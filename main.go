@@ -38,7 +38,7 @@ func main() {
 
 	wg.Wait()
 
-	fmt.Printf("%+v\n", readyData)
+	// fmt.Printf("%+v\n", readyData)
 }
 
 func fillMainSlice(content *[]byte, secondUrl string, timeMap *map[string]int64) (*types.ExchangeFunding, error) {
@@ -108,7 +108,7 @@ func fillMainSlice(content *[]byte, secondUrl string, timeMap *map[string]int64)
 		wg.Wait()
 
 		result := funding.SortTotalFunding(totalFundingSlice, "Bybit")
-		// fmt.Printf("%+v\n", result)
+		fmt.Printf("%+v\n", result)
 		return result, nil
 	}
 
@@ -168,8 +168,131 @@ func fillMainSlice(content *[]byte, secondUrl string, timeMap *map[string]int64)
 		wg.Wait()
 
 		result := funding.SortTotalFunding(totalFundingSlice, "Mexc")
-
+		fmt.Printf("%+v\n", result)
 		
+		return result, nil
+	}
+
+	if strings.Contains(secondUrl, "kucoin") {
+		timestampKucoin := map[string]int64{"3": funding.CountKucoin(3), "7": funding.CountKucoin(7), "14": funding.CountKucoin(14), 
+		"30": funding.CountKucoin(30)}
+
+		var response types.KucoinResponse
+		err := json.Unmarshal([]byte(*content), &response)
+		if err != nil {
+			// errStr := fmt.Sprintf("Error Unmarshal data %s\n", err.Error())
+			// errW.ErrorHandler(errStr)
+			fmt.Println(err)
+			return nil, err
+		}
+
+		totalFundingSlice := make([]types.TotalFundingInDays, 0, len(response.Data)) 
+		var wg sync.WaitGroup
+
+		count := 0
+		var mu sync.Mutex
+		for _, v := range response.Data {
+			if v.Symbol == "XBTMH24" {
+				continue
+			}
+			count++
+			wg.Add(1)
+			go func(obj types.KucoinItem, mu *sync.Mutex) {
+				defer wg.Done()
+
+				url := secondUrl + obj.Symbol + "&from=" + fmt.Sprint(timestampKucoin["30"]) + "&to=" + fmt.Sprint(time.Now().UnixMilli())
+		
+				content := funding.DoReq(url)
+				if content == nil {
+					fmt.Println("error to do req", url)
+					return 
+				}
+				
+				var data types.KucoinSecondResponse
+				err := json.Unmarshal([]byte(*content), &data)
+				if err != nil {
+					fmt.Println("error unmarshal", err)
+					return
+				}
+				if len(data.Data) == 0 {
+					fmt.Println("error: empty data most likely to many request kucoin", url)
+					return
+				}
+				
+				totalFund := funding.CountTotalFundingKucoin(data.Data, obj.Symbol, &timestampKucoin) //{symbol: btcusdt, 3: сумма всах фандингов за 3 дня, 7: ...}
+				mu.Lock()
+				totalFundingSlice = append(totalFundingSlice, *totalFund)
+				mu.Unlock()
+			}(v, &mu)
+
+			if count == 15 {
+				time.Sleep(900 * time.Millisecond)
+				count = 0
+			}
+		}
+		wg.Wait()
+		result := funding.SortTotalFunding(totalFundingSlice, "Kucoin")
+		fmt.Printf("%+v\n", result)
+		return result, nil
+	}
+
+	if strings.Contains(secondUrl, "okx") {
+		var response types.OkxResponse
+		err := json.Unmarshal([]byte(*content), &response)
+		if err != nil {
+			// errStr := fmt.Sprintf("Error Unmarshal data %s\n", err.Error())
+			// errW.ErrorHandler(errStr)
+			fmt.Println(err)
+			return nil, err
+		}
+
+		totalFundingSlice := make([]types.TotalFundingInDays, 0, len(response.Data)) 
+		var wg sync.WaitGroup
+
+		count := 0
+		var mu sync.Mutex
+		for _, v := range response.Data {
+
+			count++
+			wg.Add(1)
+			go func(obj types.OkxItem, mu *sync.Mutex) {
+				defer wg.Done()
+
+				url := secondUrl + obj.InstId
+
+				content := funding.DoReq(url)
+				if content == nil {
+					fmt.Println("error to do req", url)
+					return 
+				}
+				
+				var data types.OkxSecondResponse
+				err := json.Unmarshal([]byte(*content), &data)
+				if err != nil {
+					fmt.Println("error unmarshal", err)
+					return
+				}
+				if len(data.Data) == 0 {
+					fmt.Println("error: empty data most likely to many request bybit", url)
+					return
+				}
+				
+				totalFund := funding.CountTotalFundingOkx(data.Data, obj.InstId, timeMap) //{symbol: btcusdt, 3: сумма всах фандингов за 3 дня, 7: ...}
+				fmt.Println(totalFund)
+				mu.Lock()
+				totalFundingSlice = append(totalFundingSlice, *totalFund)
+				mu.Unlock()
+			}(v, &mu)
+
+			if count == 20 {
+				time.Sleep(900 * time.Millisecond)
+				count = 0
+			}
+		}
+		wg.Wait()
+
+		result := funding.SortTotalFunding(totalFundingSlice, "Okx")
+		fmt.Printf("%+v\n", result)
 		return result, nil
 	}
 

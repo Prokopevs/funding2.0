@@ -28,11 +28,44 @@ type MexcResponse struct {
 type MexcSecondItem struct {
 	Symbol      string  `json:"symbol"`
 	FundingRate float64 `json:"fundingRate"`
-	SettleTime  int64  `json:"settleTime"`
+	SettleTime  int64   `json:"settleTime"`
 }
 
 type MexcSecondResponse struct {
 	Data struct {
 		ResultList []MexcSecondItem `json:"resultList"`
 	} `json:"data"`
+}
+
+type KucoinItem struct {
+	Symbol string `json:"symbol"`
+}
+type KucoinResponse struct {
+	Data []KucoinItem `json:"data"`
+}
+
+type KucoinSecondItem struct {
+	Symbol      string  `json:"symbol"`
+	FundingRate float64 `json:"fundingRate"`
+	Timepoint   int64   `json:"timepoint"`
+}
+
+type KucoinSecondResponse struct {
+	Data []KucoinSecondItem `json:"data"`
+}
+
+type OkxItem struct {
+	InstId string `json:"instId"`
+}
+type OkxResponse struct {
+	Data []OkxItem `json:"data"`
+}
+type OkxSecondItem struct {
+	InstId      string  `json:"instId"`
+	FundingRate string `json:"fundingRate"`
+	FundingTime string   `json:"fundingTime"`
+}
+
+type OkxSecondResponse struct {
+	Data []OkxSecondItem `json:"data"`
 }
