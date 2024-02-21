@@ -7,7 +7,8 @@ func Init() ([][]string, map[string]int64) {
 	mexcUrl := []string{"https://contract.mexc.com/api/v1/contract/ticker", "https://contract.mexc.com/api/v1/contract/funding_rate/history?symbol="}
 	kucoin := []string{"https://api-futures.kucoin.com/api/v1/contracts/active", "https://api-futures.kucoin.com/api/v1/contract/funding-rates?symbol="}
 	okx := []string{"https://www.okx.com/api/v5/public/open-interest?instType=SWAP", "https://www.okx.com/api/v5/public/funding-rate-history?instId="}
-	urlsArrays := [][]string{bybitUrl, mexcUrl, kucoin, okx}
+	bingx := []string{"https://open-api.bingx.com/openApi/swap/v2/quote/premiumIndex", "https://open-api.bingx.com/openApi/swap/v2/quote/fundingRate?limit=300&symbol="}
+	urlsArrays := [][]string{bybitUrl, mexcUrl, kucoin, okx, bingx}
 
 	timestamp := map[string]int64{"3": countTimestamp(3), "7": countTimestamp(7), "14": countTimestamp(14), "30": countTimestamp(30)}
 

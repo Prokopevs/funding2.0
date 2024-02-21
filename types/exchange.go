@@ -61,11 +61,27 @@ type OkxResponse struct {
 	Data []OkxItem `json:"data"`
 }
 type OkxSecondItem struct {
-	InstId      string  `json:"instId"`
+	InstId      string `json:"instId"`
 	FundingRate string `json:"fundingRate"`
-	FundingTime string   `json:"fundingTime"`
+	FundingTime string `json:"fundingTime"`
 }
 
 type OkxSecondResponse struct {
 	Data []OkxSecondItem `json:"data"`
+}
+
+type BingxItem struct {
+	Symbol string `json:"symbol"`
+}
+type BingxResponse struct {
+	Data []BingxItem `json:"data"`
+}
+type BingxSecondItem struct {
+	Symbol      string `json:"symbol"`
+	FundingRate string `json:"fundingRate"`
+	FundingTime int64 `json:"fundingTime"`
+}
+
+type BingxSecondResponse struct {
+	Data []BingxSecondItem `json:"data"`
 }
