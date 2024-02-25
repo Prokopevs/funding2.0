@@ -2,6 +2,7 @@ package types
 
 type BybitItem struct {
 	Symbol string `json:"symbol"`
+	FundingRateTimestamp string `json:"fundingRateTimestamp"`
 }
 type BybitResponse struct {
 	Result struct {
@@ -39,6 +40,7 @@ type MexcSecondResponse struct {
 
 type KucoinItem struct {
 	Symbol string `json:"symbol"`
+	Timepoint int64 `json:"timepoint"`
 }
 type KucoinResponse struct {
 	Data []KucoinItem `json:"data"`

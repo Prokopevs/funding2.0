@@ -28,6 +28,8 @@ func CountTotalFundingBybit(list []types.BybitSecondItem, symbol string, timeMap
 		count += fundingNum
 
 		switch timestamp {
+		case (*timeMap)["1"]: 
+			obj.OneDay, _ = calculateAndAssignPercent(count, "Bybit")	
 		case (*timeMap)["3"]: 
 			obj.ThreeDays, _ = calculateAndAssignPercent(count, "Bybit")
 		case (*timeMap)["7"]: 
@@ -53,6 +55,8 @@ func CountTotalFundingMexc(list []types.MexcSecondItem, symbol string, timeMap *
 		count += v.FundingRate
 
 		switch v.SettleTime {
+		case (*timeMap)["1"]: 
+			obj.OneDay, _ = calculateAndAssignPercent(count, "Mexc")
 		case (*timeMap)["3"]: 
 			obj.ThreeDays, _ = calculateAndAssignPercent(count, "Mexc")
 		case (*timeMap)["7"]: 
@@ -78,6 +82,8 @@ func CountTotalFundingKucoin(list []types.KucoinSecondItem, symbol string, timeM
 		count += v.FundingRate
 
 		switch v.Timepoint {
+		case (*timeMap)["1"]: 
+			obj.OneDay, _ = calculateAndAssignPercent(count, "Kucoin")
 		case (*timeMap)["3"]: 
 			obj.ThreeDays, _ = calculateAndAssignPercent(count, "Kucoin")
 		case (*timeMap)["7"]: 
@@ -116,6 +122,8 @@ func CountTotalFundingOkx(list []types.OkxSecondItem, symbol string, timeMap *ma
 		count += fundingNum
 
 		switch timestamp {
+		case (*timeMap)["1"]: 
+			obj.OneDay, _ = calculateAndAssignPercent(count, "Okx")
 		case (*timeMap)["3"]: 
 			obj.ThreeDays, _ = calculateAndAssignPercent(count, "Okx")
 		case (*timeMap)["7"]: 
@@ -147,6 +155,8 @@ func CountTotalFundingBingx(list []types.BingxSecondItem, symbol string, timeMap
 		count += fundingNum
 
 		switch v.FundingTime {
+		case (*timeMap)["1"]: 
+			obj.OneDay, _ = calculateAndAssignPercent(count, "BingX")
 		case (*timeMap)["3"]: 
 			obj.ThreeDays, _ = calculateAndAssignPercent(count, "BingX")
 		case (*timeMap)["7"]: 

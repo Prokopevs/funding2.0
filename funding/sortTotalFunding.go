@@ -8,12 +8,14 @@ import (
 )
 
 func SortTotalFunding(totalFundingSlice []types.TotalFundingInDays, exchangeName string) *types.ExchangeFunding {
+	oneDaysArr := sortArray(totalFundingSlice, "OneDay")
 	threeDaysArr := sortArray(totalFundingSlice, "ThreeDays")
 	sevenDaysArr := sortArray(totalFundingSlice, "SevenDays")
 	fourteenDaysArr := sortArray(totalFundingSlice, "FourteenDays")
 	thirtyDaysArr :=  sortArray(totalFundingSlice, "ThirtyDays")
 
 	elemsFun := types.ElemsFunding{
+		OneDay: oneDaysArr,
 		ThreeDays: threeDaysArr,
 		SevenDays: sevenDaysArr, 
 		FourteenDays: fourteenDaysArr,
@@ -31,6 +33,10 @@ func SortTotalFunding(totalFundingSlice []types.TotalFundingInDays, exchangeName
 func sortArray(arr []types.TotalFundingInDays, field string) []types.FundingElem{
 
 	switch field {
+	case "OneDay":
+		sort.Slice(arr, func(i, j int) bool {
+			return arr[i].OneDay > arr[j].OneDay
+		})
 	case "ThreeDays":
 		sort.Slice(arr, func(i, j int) bool {
 			return arr[i].ThreeDays > arr[j].ThreeDays
@@ -49,9 +55,9 @@ func sortArray(arr []types.TotalFundingInDays, field string) []types.FundingElem
 		})
 	}
 
-	array := make([]types.FundingElem, 0, 7)
+	array := make([]types.FundingElem, 0, 5)
 	for i, v := range arr {
-		if i == 7 {
+		if i == 5 {
 			break
 		}
 		value := reflect.ValueOf(v) 

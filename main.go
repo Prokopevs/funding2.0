@@ -13,8 +13,11 @@ import (
 )
 
 func main() {
-	urlsArrays, timestamp := funding.Init()
-	readyData := make([]types.ExchangeFunding, 0, 4) 
+	urlsArrays, timestamp, err := funding.Init()
+	if err != nil {
+		return
+	}
+	readyData := make([]types.ExchangeFunding, 0, 6) 
 
 	var wg sync.WaitGroup
 	var mu sync.Mutex
@@ -108,7 +111,7 @@ func fillMainSlice(content *[]byte, secondUrl string, timeMap *map[string]int64)
 		wg.Wait()
 
 		result := funding.SortTotalFunding(totalFundingSlice, "Bybit")
-		fmt.Printf("%+v\n", result)
+		fmt.Printf("%+v\n\n", result)
 		return result, nil
 	}
 
@@ -168,17 +171,19 @@ func fillMainSlice(content *[]byte, secondUrl string, timeMap *map[string]int64)
 		wg.Wait()
 
 		result := funding.SortTotalFunding(totalFundingSlice, "Mexc")
-		fmt.Printf("%+v\n", result)
+		fmt.Printf("%+v\n\n", result)
 		
 		return result, nil
 	}
 
 	if strings.Contains(secondUrl, "kucoin") {
-		timestampKucoin := map[string]int64{"3": funding.CountKucoin(3), "7": funding.CountKucoin(7), "14": funding.CountKucoin(14), 
-		"30": funding.CountKucoin(30)}
+		timestampKucoin, err := funding.GetTimestampsKucoin()
+		if err != nil {
+			return nil, err
+		}
 
 		var response types.KucoinResponse
-		err := json.Unmarshal([]byte(*content), &response)
+		err = json.Unmarshal([]byte(*content), &response)
 		if err != nil {
 			// errStr := fmt.Sprintf("Error Unmarshal data %s\n", err.Error())
 			// errW.ErrorHandler(errStr)
@@ -232,7 +237,7 @@ func fillMainSlice(content *[]byte, secondUrl string, timeMap *map[string]int64)
 		}
 		wg.Wait()
 		result := funding.SortTotalFunding(totalFundingSlice, "Kucoin")
-		fmt.Printf("%+v\n", result)
+		fmt.Printf("%+v\n\n", result)
 		return result, nil
 	}
 
@@ -291,7 +296,7 @@ func fillMainSlice(content *[]byte, secondUrl string, timeMap *map[string]int64)
 		wg.Wait()
 
 		result := funding.SortTotalFunding(totalFundingSlice, "Okx")
-		fmt.Printf("%+v\n", result)
+		fmt.Printf("%+v\n\n", result)
 		return result, nil
 	}
 
@@ -350,7 +355,7 @@ func fillMainSlice(content *[]byte, secondUrl string, timeMap *map[string]int64)
 		wg.Wait()
 
 		result := funding.SortTotalFunding(totalFundingSlice, "BingX")
-		fmt.Printf("%+v\n", result)
+		fmt.Printf("%+v\n\n", result)
 		return result, nil
 	}
 

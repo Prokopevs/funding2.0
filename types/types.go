@@ -25,6 +25,7 @@ type FundingCoin struct {
 
 type TotalFundingInDays struct {
 	Symbol       string  `json:"symbol"`
+	OneDay    	 float64 `json:"oneDay"`
 	ThreeDays    float64 `json:"threeDays"`
 	SevenDays    float64 `json:"sevenDays"`
 	FourteenDays float64 `json:"fourteenDays"`
@@ -39,6 +40,7 @@ type FundingElem struct {
 }
 
 type ElemsFunding struct {
+	OneDay    	 []FundingElem `json:"oneDay"`
 	ThreeDays    []FundingElem `json:"threeDays"`
 	SevenDays    []FundingElem `json:"sevenDays"`
 	FourteenDays []FundingElem `json:"fourteenDays"`
