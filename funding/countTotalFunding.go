@@ -172,6 +172,45 @@ func CountTotalFundingBingx(list []types.BingxSecondItem, symbol string, timeMap
 	return &obj
 }
 
+func CountTotalFundingBitget(list []types.BitgetSecondItem, symbol string, timeMap *map[string]int64) *types.TotalFundingInDays {
+	obj := types.TotalFundingInDays{
+		Symbol: symbol,
+	}
+	var count float64
+
+	for _, v := range list {
+		timestamp, err := strconv.ParseInt(v.SettleTime, 10, 64)
+		if err != nil {
+			fmt.Println("Ошибка при преобразовании строки в int64 CountTotalFundingBitget:", err)
+			continue
+		}
+
+		fundingNum, err := ConvertToFloat(v.FundingRate)
+		if err != nil {
+			fmt.Println("Ошибка при преобразовании строки в число CountTotalFundingBitget:", err)
+			continue
+		}
+		
+		count += fundingNum
+
+		switch timestamp {
+		case (*timeMap)["1"]: 
+			obj.OneDay, _ = calculateAndAssignPercent(count, "Bitget")	
+		case (*timeMap)["3"]: 
+			obj.ThreeDays, _ = calculateAndAssignPercent(count, "Bitget")
+		case (*timeMap)["7"]: 
+			obj.SevenDays, _ = calculateAndAssignPercent(count, "Bitget")
+		case (*timeMap)["14"]: 
+			obj.FourteenDays, _ = calculateAndAssignPercent(count, "Bitget")
+		case (*timeMap)["30"]: 
+			obj.ThirtyDays, _ = calculateAndAssignPercent(count, "Bitget")
+			return &obj
+		}
+	}
+
+	return &obj
+}
+
 func calculateAndAssignPercent(count float64, exchange string) (float64, error) {
     percent, err := ConvertToFloat(fmt.Sprintf("%.4f", count * 100))
     if err != nil {

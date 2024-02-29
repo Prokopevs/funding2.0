@@ -1,7 +1,7 @@
 package types
 
 type BybitItem struct {
-	Symbol string `json:"symbol"`
+	Symbol               string `json:"symbol"`
 	FundingRateTimestamp string `json:"fundingRateTimestamp"`
 }
 type BybitResponse struct {
@@ -39,8 +39,8 @@ type MexcSecondResponse struct {
 }
 
 type KucoinItem struct {
-	Symbol string `json:"symbol"`
-	Timepoint int64 `json:"timepoint"`
+	Symbol    string `json:"symbol"`
+	Timepoint int64  `json:"timepoint"`
 }
 type KucoinResponse struct {
 	Data []KucoinItem `json:"data"`
@@ -81,9 +81,24 @@ type BingxResponse struct {
 type BingxSecondItem struct {
 	Symbol      string `json:"symbol"`
 	FundingRate string `json:"fundingRate"`
-	FundingTime int64 `json:"fundingTime"`
+	FundingTime int64  `json:"fundingTime"`
 }
 
 type BingxSecondResponse struct {
 	Data []BingxSecondItem `json:"data"`
+}
+
+type BitgetItem struct {
+	Symbol string `json:"symbol"`
+}
+type BitgetResponse struct {
+	Data []BitgetItem `json:"data"`
+}
+type BitgetSecondItem struct {
+	Symbol      string `json:"symbol"`
+	FundingRate string `json:"fundingRate"`
+	SettleTime  string `json:"settleTime"`
+}
+type BitgetSecondResponse struct {
+	Data []BitgetSecondItem `json:"data"`
 }

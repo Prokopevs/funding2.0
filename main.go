@@ -164,7 +164,7 @@ func fillMainSlice(content *[]byte, secondUrl string, timeMap *map[string]int64)
 			}(v, &mu)
 
 			if count == 10 {
-				time.Sleep(1300 * time.Millisecond)
+				time.Sleep(1400 * time.Millisecond)
 				count = 0
 			}
 		}
@@ -355,6 +355,64 @@ func fillMainSlice(content *[]byte, secondUrl string, timeMap *map[string]int64)
 		wg.Wait()
 
 		result := funding.SortTotalFunding(totalFundingSlice, "BingX")
+		fmt.Printf("%+v\n\n", result)
+		return result, nil
+	}
+
+	if strings.Contains(secondUrl, "bitget") {
+		var response types.BitgetResponse
+		err := json.Unmarshal([]byte(*content), &response)
+		if err != nil {
+			// errStr := fmt.Sprintf("Error Unmarshal data %s\n", err.Error())
+			// errW.ErrorHandler(errStr)
+			fmt.Println(err)
+			return nil, err
+		}
+
+		totalFundingSlice := make([]types.TotalFundingInDays, 0, len(response.Data)) 
+		var wg sync.WaitGroup
+
+		count := 0
+		var mu sync.Mutex
+		for _, v := range response.Data {
+			count++
+			wg.Add(1)
+			go func(obj types.BitgetItem, mu *sync.Mutex) {
+				defer wg.Done()
+
+				url := secondUrl + obj.Symbol + "_UMCBL&pageSize=200"
+
+				content := funding.DoReq(url)
+				if content == nil {
+					fmt.Println("error to do req bitget", url)
+					return 
+				}
+				
+				var data types.BitgetSecondResponse
+				err := json.Unmarshal([]byte(*content), &data)
+				if err != nil {
+					fmt.Println("error unmarshal bitget", err)
+					return
+				}
+				if len(data.Data) == 0 {
+					fmt.Println("error: empty data most likely to many request bitget", url)
+					return
+				}
+				
+				totalFund := funding.CountTotalFundingBitget(data.Data, obj.Symbol, timeMap) //{symbol: btcusdt, 3: сумма всах фандингов за 3 дня, 7: ...}
+				mu.Lock()
+				totalFundingSlice = append(totalFundingSlice, *totalFund)
+				mu.Unlock()
+			}(v, &mu)
+
+			if count == 15 {
+				time.Sleep(1200 * time.Millisecond)
+				count = 0
+			}
+		}
+		wg.Wait()
+
+		result := funding.SortTotalFunding(totalFundingSlice, "Bitget")
 		fmt.Printf("%+v\n\n", result)
 		return result, nil
 	}

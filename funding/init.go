@@ -15,7 +15,8 @@ func Init() ([][]string, map[string]int64, error) {
 	kucoin := []string{"https://api-futures.kucoin.com/api/v1/contracts/active", "https://api-futures.kucoin.com/api/v1/contract/funding-rates?symbol="}
 	okx := []string{"https://www.okx.com/api/v5/public/open-interest?instType=SWAP", "https://www.okx.com/api/v5/public/funding-rate-history?instId="}
 	bingx := []string{"https://open-api.bingx.com/openApi/swap/v2/quote/premiumIndex", "https://open-api.bingx.com/openApi/swap/v2/quote/fundingRate?limit=300&symbol="}
-	urlsArrays := [][]string{bybitUrl, mexcUrl, kucoin, okx, bingx}
+	bitget := []string{"https://api.bitget.com/api/v2/mix/market/tickers?productType=USDT-FUTURES", "https://api.bitget.com/api/mix/v1/market/history-fundRate?symbol="}
+	urlsArrays := [][]string{bybitUrl, mexcUrl, kucoin, okx, bingx, bitget}
 
 	timestamp, err := getTimestamps()
 	if err != nil {
